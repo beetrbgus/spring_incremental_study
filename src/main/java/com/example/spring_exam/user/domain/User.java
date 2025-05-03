@@ -1,6 +1,5 @@
 package com.example.spring_exam.user.domain;
 
-import com.example.spring_exam.user.dto.SignupReq;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,13 +35,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static User createMember(SignupReq signupReq) {
-        return User.builder()
-                .username(signupReq.username())
-                .password(signupReq.password())
-                .email(signupReq.email())
-                .nickname(signupReq.nickname())
-                .role(UserRole.USER)
-                .build();
-    }
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 }

@@ -17,6 +17,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void signUp(SignupReq signupReq) {
+        userRepository.findByUsernameAndEmail(signupReq.username(), signupReq.email())
+            .ifPresent(user -> { throw new RuntimeException("username 중복입니다."); });
+
         User user = userMapper.signupReqToEntity(signupReq);
 
         userRepository.save(user);

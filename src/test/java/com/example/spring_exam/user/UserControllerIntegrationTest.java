@@ -40,4 +40,29 @@ class UserControllerIntegrationTest {
         )
         .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("회원가입 실패 - 중복 닉네임")
+    void testSignupNicknameDuplicate() throws Exception {
+        SignupReq signupReq = new SignupReq(
+                "testuser2",
+                "Test1234!2",
+                "Tester2",
+                "testuser2@example.com"
+        );
+        // user 추가
+        mockMvc.perform(
+                post("/api/user/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupReq))
+        ).andExpect(status().isOk());
+
+        // 중복 유저 추가
+        mockMvc.perform(
+            post("/api/user/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(signupReq))
+        )
+        .andExpect(status().is5xxServerError());
+    }
 }
