@@ -1,4 +1,4 @@
-package com.example.spring_exam.common.exception.auth;
+package com.example.spring_exam.common.exception;
 
 import com.example.spring_exam.common.response.ErrorCode;
 import lombok.Getter;

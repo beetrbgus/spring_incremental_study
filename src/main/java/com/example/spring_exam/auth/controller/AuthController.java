@@ -1,8 +1,11 @@
 package com.example.spring_exam.auth.controller;
 
+import com.example.spring_exam.auth.dto.AccessTokenResponse;
 import com.example.spring_exam.auth.dto.UserTokenResponse;
 import com.example.spring_exam.auth.service.AuthService;
+import com.example.spring_exam.common.response.CommonResponse;
 import com.example.spring_exam.user.dto.LoginReq;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,27 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserTokenResponse> login(@Valid @RequestBody LoginReq req) {
+    public CommonResponse<UserTokenResponse> login(@Valid @RequestBody LoginReq req) {
         UserTokenResponse token = authService.login(req);
 
-        return ResponseEntity.ok().body(token);
+        return CommonResponse.ok(token);
+    }
+
+    @PostMapping("/refresh")
+    public CommonResponse<AccessTokenResponse> generateAccessToken(HttpServletRequest request) {
+        String refreshToken = resolveToken(request);
+        AccessTokenResponse accessTokenResponse = authService.generateAccessToken(refreshToken);
+
+        return CommonResponse.created(accessTokenResponse);
+    }
+
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        String prefix = "Bearer ";
+        if (bearerToken != null && bearerToken.startsWith(prefix)) {
+            return bearerToken.substring(prefix.length());
+        }
+        return null;
     }
 }

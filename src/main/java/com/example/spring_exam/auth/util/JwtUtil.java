@@ -3,7 +3,6 @@ package com.example.spring_exam.auth.util;
 import com.example.spring_exam.auth.dto.UserTokenInfo;
 import com.example.spring_exam.user.domain.UserRole;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -79,7 +78,17 @@ public class JwtUtil {
         return new UserTokenInfo(id, username, UserRole.fromString(roleStr));
     }
 
-    public boolean validateToken(String token) {
+    public String getUsernameByRefreshToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
+    }
+
+    public boolean validationToken(String token) {
         try {
             Jwts.parser()
                 .verifyWith(key)
