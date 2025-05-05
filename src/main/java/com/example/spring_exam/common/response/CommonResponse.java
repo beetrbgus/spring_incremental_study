@@ -23,4 +23,8 @@ public record CommonResponse<T>(
     public static <T> CommonResponse<T> fail(final ErrorCode c) {
         return new CommonResponse<>(c.getHttpStatus(), false, null, ExceptionRes.of(c));
     }
+
+    public static <T> CommonResponse<T> fail(final T data, final ErrorCode c) {
+        return new CommonResponse<>(c.getHttpStatus(), false, data, ExceptionRes.of(c));
+    }
 }
