@@ -3,12 +3,12 @@ package com.example.spring_exam.common.exception.auth;
 import com.example.spring_exam.common.exception.AppException;
 import com.example.spring_exam.common.response.ErrorCode;
 
-public class CustomAuthException extends AppException {
-    public CustomAuthException(ErrorCode errorCode) {
-        super(errorCode);
+public class UnAuthorizedException extends AppException {
+    public UnAuthorizedException() {
+        super(ErrorCode.UNAUTHORIZED_ACCESS);
     }
 
-    public CustomAuthException(int statusCode) {
+    public UnAuthorizedException(int statusCode) {
         super(statusCode);
     }
 }
