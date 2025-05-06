@@ -28,7 +28,8 @@ public enum ErrorCode implements EnumCode {
     UNSUPPORTED_TOKEN(40102, HttpStatus.UNAUTHORIZED, "지원되지 않는 토큰입니다."),
     WRONG_TOKEN(40103, HttpStatus.UNAUTHORIZED, "잘못된 토큰입니다."),
     EMPTY_TOKEN(40104, HttpStatus.UNAUTHORIZED, "토큰이 비어있습니다."),
-    UNAUTHORIZED_ACCESS(40105, HttpStatus.UNAUTHORIZED, "인증되지 않은 접근입니다."),
+    UNAUTHORIZED_ACCESS(40105, HttpStatus.UNAUTHORIZED, "인가되지 않은 접근입니다."),
+    UNAUTHENTICATED_USER(40105, HttpStatus.FORBIDDEN, "인증되지 않은 사용자입니다."),
     FORBIDDEN_ACCESS_ADMIN(40300, HttpStatus.FORBIDDEN, "관리자 권한이 필요합니다."),
 
     ;

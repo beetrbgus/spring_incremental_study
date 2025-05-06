@@ -1,5 +1,8 @@
 package com.example.spring_exam.common.exception;
 
+import com.example.spring_exam.common.exception.auth.UnAuthenticatedException;
+import com.example.spring_exam.common.exception.auth.UnAuthorizedException;
+import com.example.spring_exam.common.exception.global.BadRequestException;
 import com.example.spring_exam.common.response.CommonResponse;
 import com.example.spring_exam.common.response.ErrorCode;
 import jakarta.validation.ConstraintViolationException;
@@ -55,6 +58,34 @@ public class GlobalExceptionHandler {
 
         ErrorCode invalidInputValue = ErrorCode.INVALID_INPUT_VALUE;
         return getResponse(invalidInputValue.getHttpStatus(), invalidInputValue);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<CommonResponse<Map<String, String>>> handleAllExceptions(BadRequestException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        return getResponse(errorCode.getHttpStatus(), errorCode);
+    }
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<CommonResponse<Map<String, String>>> handleAllExceptions(UnAuthorizedException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        return getResponse(errorCode.getHttpStatus(), errorCode);
+    }
+
+    @ExceptionHandler(UnAuthenticatedException.class)
+    public ResponseEntity<CommonResponse<Map<String, String>>> handleAllExceptions(UnAuthenticatedException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+        return getResponse(errorCode.getHttpStatus(), errorCode);
+    }
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<CommonResponse<Map<String, String>>> handleAllExceptions(AppException ex) {
+        ErrorCode errorCode = ex.getErrorCode();
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        return getResponse(errorCode.getHttpStatus(), errorCode, error);
     }
 
     @ExceptionHandler(Exception.class)

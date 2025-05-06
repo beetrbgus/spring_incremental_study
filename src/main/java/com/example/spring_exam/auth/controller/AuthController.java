@@ -31,19 +31,10 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public CommonResponse<AccessTokenResponse> generateAccessToken(HttpServletRequest request) {
-        String refreshToken = resolveToken(request);
+        String refreshToken = request.getHeader("Refresh-Token");
+
         AccessTokenResponse accessTokenResponse = authService.generateAccessToken(refreshToken);
 
         return CommonResponse.created(accessTokenResponse);
-    }
-
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        String prefix = "Bearer ";
-        if (bearerToken != null && bearerToken.startsWith(prefix)) {
-            return bearerToken.substring(prefix.length());
-        }
-        return null;
     }
 }
