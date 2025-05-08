@@ -4,6 +4,7 @@ import com.example.spring_exam.auth.dto.UserTokenInfo;
 import com.example.spring_exam.auth.service.RefreshTokenService;
 import com.example.spring_exam.auth.service.UserDetailsServiceImpl;
 import com.example.spring_exam.auth.util.JwtUtil;
+import com.example.spring_exam.auth.util.TokenExtractor;
 import com.example.spring_exam.common.response.CommonResponse;
 import com.example.spring_exam.common.response.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +31,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final ObjectMapper objectMapper;
+    private final TokenExtractor tokenExtractor;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = jwtUtil.resolveToken(request);
+        String accessToken = tokenExtractor.extractAccessToken(request);
 
         if (accessToken != null) {
             try {
