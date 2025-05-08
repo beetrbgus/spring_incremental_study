@@ -17,12 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -41,10 +44,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 UserTokenInfo userInfo = jwtUtil.getUserInfo(accessToken);
 
-                response.setHeader("Authorization", "Bearer " + accessToken);
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(userInfo, null, null)
-                );
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userInfo.role().getKey()));
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userInfo, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (ExpiredJwtException e) {
                 // 토큰이 만료되었을 때 요청 속성에 더 자세한 정보를 담아서 전달
