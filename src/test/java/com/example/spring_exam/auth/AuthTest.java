@@ -189,8 +189,8 @@ public class AuthTest {
 
         // 로그아웃 테스트
         mockMvc.perform(
-                post("/api/auth/logout")
-                .header("Authorization", "Bearer " + userTokenResponse.getAccessToken())
+            post("/api/auth/logout")
+            .header("Authorization", "Bearer " + userTokenResponse.getAccessToken())
         )
         .andExpect(status().is4xxClientError())
         ;
