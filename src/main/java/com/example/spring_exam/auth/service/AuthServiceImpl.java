@@ -5,6 +5,7 @@ import com.example.spring_exam.auth.dto.UserTokenInfo;
 import com.example.spring_exam.auth.dto.UserTokenResponse;
 import com.example.spring_exam.auth.util.JwtUtil;
 import com.example.spring_exam.auth.util.UserAuthenticator;
+import com.example.spring_exam.common.exception.AppException;
 import com.example.spring_exam.common.exception.auth.CustomJwtTokenException;
 import com.example.spring_exam.common.exception.auth.UnAuthenticatedException;
 import com.example.spring_exam.common.exception.auth.UnAuthorizedException;
@@ -17,9 +18,11 @@ import com.example.spring_exam.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -51,8 +54,10 @@ public class AuthServiceImpl implements AuthService {
             if(!StringUtils.hasText(refreshToken)) {
                 throw new BadRequestException();
             }
+
             // 만료되지 않은 토큰으로 사용자 명 조회
             String username = jwtUtil.getUsernameByRefreshToken(refreshToken);
+
             // Redis에서 refresh Token 가져옴 (삭제되었다면 로그인 다시 필요)
             refreshTokenService
                 .getRefreshToken(username)
@@ -74,6 +79,24 @@ public class AuthServiceImpl implements AuthService {
             throw new UnAuthorizedException();
         } catch (MalformedJwtException e) {
             throw new CustomJwtTokenException(ErrorCode.UNSUPPORTED_TOKEN);
+        }
+    }
+
+    @Override
+    public void logout(String accessToken) {
+        if(!StringUtils.hasText(accessToken)) {
+            throw new BadRequestException();
+        }
+        log.info("Access Token: {}", accessToken);
+
+        try {
+            UserTokenInfo userInfo = jwtUtil.getUserInfo(accessToken);
+
+            refreshTokenService.deleteRefreshToken(userInfo.username());
+        } catch (Exception e) {
+            log.error("로그아웃 중 오류 발생", e);
+
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }
