@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final TokenExtractor tokenExtractor;
+
     @PostMapping("/login")
     public CommonResponse<UserTokenResponse> login(@Valid @RequestBody LoginReq req) {
         UserTokenResponse token = authService.login(req);
@@ -36,5 +37,14 @@ public class AuthController {
         AccessTokenResponse accessTokenResponse = authService.generateAccessToken(refreshToken);
 
         return CommonResponse.created(accessTokenResponse);
+    }
+
+    @PostMapping("/logout")
+    public CommonResponse<Void> logout(HttpServletRequest request) {
+        String accessToken = tokenExtractor.extractAccessToken(request);
+
+        authService.logout(accessToken);
+
+        return CommonResponse.ok(null);
     }
 }
