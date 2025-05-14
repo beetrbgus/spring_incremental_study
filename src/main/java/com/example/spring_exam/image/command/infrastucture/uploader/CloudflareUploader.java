@@ -24,6 +24,7 @@ public class CloudflareUploader implements ImageUploader {
     private final R2StorageProperties properties;
     private final AmazonS3 client;
     private final FileValidator fileValidator;
+
     @Override
     public String upload(MultipartFile file, ImageType imageType) {
         try {
