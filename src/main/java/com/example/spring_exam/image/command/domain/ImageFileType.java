@@ -28,6 +28,12 @@ public enum ImageFileType implements EnumCode {
         return this.value;
     }
 
+    @Override
+    public String getDisplayName() {
+        return extension;
+    }
+
+
     public static ImageFileType fromMimeType(String mimeType) {
         return Arrays.stream(values())
                 .filter(type -> type.getValue().equalsIgnoreCase(mimeType))

@@ -56,6 +56,11 @@ public enum ErrorCode implements EnumCode {
 
     @Override
     public String getValue() {
+        return code.toString();
+    }
+
+    @Override
+    public String getDisplayName() {
         return message;
     }
 }
