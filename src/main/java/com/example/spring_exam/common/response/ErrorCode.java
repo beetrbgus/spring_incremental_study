@@ -32,6 +32,16 @@ public enum ErrorCode implements EnumCode {
     UNAUTHENTICATED_USER(40105, HttpStatus.FORBIDDEN, "인증되지 않은 사용자입니다."),
     FORBIDDEN_ACCESS_ADMIN(40300, HttpStatus.FORBIDDEN, "관리자 권한이 필요합니다."),
 
+    // Product
+    INSUFFICIENT_STOCK_ERROR(50010, HttpStatus.INTERNAL_SERVER_ERROR, "상품의 재고가 부족합니다."),
+
+    // File
+    FILE_UPLOAD_ERROR(50700, HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
+    UNSUPPORTED_FILE_TYPE(50701, HttpStatus.BAD_REQUEST, "지원하지 않는 파일 타입입니다."),
+    UPLOAD_FILE_NOT_FOUND(50702, HttpStatus.BAD_REQUEST, "파일이 없습니다"),
+    INVALID_FILE_NAME(50703, HttpStatus.BAD_REQUEST, "파일 이름이 유효하지 않습니다."),
+
+
     ;
     private final Integer code;
     private final HttpStatus httpStatus;
