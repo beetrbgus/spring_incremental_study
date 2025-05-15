@@ -33,6 +33,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+
     private final ObjectMapper objectMapper;
     private final TokenExtractor tokenExtractor;
 
@@ -46,8 +47,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userInfo.role().getKey()));
 
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userInfo.username());
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userInfo, null, authorities);
+                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
