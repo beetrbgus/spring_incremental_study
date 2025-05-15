@@ -9,6 +9,9 @@ public interface EnumCode {
     @JsonValue
     String getValue();
 
+    @JsonValue
+    String getDisplayName();
+
     @JsonCreator
     static <E extends Enum<E> & EnumCode> E fromValue(Class<E> enumType, String value) {
         for (E enumConstant : enumType.getEnumConstants()) {
