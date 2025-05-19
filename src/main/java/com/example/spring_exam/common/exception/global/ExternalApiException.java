@@ -3,13 +3,13 @@ package com.example.spring_exam.common.exception.global;
 import com.example.spring_exam.common.exception.AppException;
 import com.example.spring_exam.common.response.ErrorCode;
 
-public class BadRequestException extends AppException {
+public class ExternalApiException extends AppException {
 
-    public BadRequestException() {
-        super(ErrorCode.INVALID_INPUT_VALUE);
+    public ExternalApiException() {
+        super(ErrorCode.EXTERNAL_REMOTE_COMMUNICATION);
     }
 
-    public BadRequestException(ErrorCode errorCode) {
+    public ExternalApiException(ErrorCode errorCode) {
         super(errorCode);
     }
 }
