@@ -8,5 +8,6 @@ import java.util.List;
 public interface ImageCloudStorageService {
     String upload(MultipartFile file, ImageType imageType);
 
-    void deleteImage(List<String> imageUrlList);
+    void deleteImage(String imageUrl);
+    List<String> deleteImages(List<String> imageUrlList);
 }
