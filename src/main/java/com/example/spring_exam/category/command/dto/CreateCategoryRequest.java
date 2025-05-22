@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
-
 public record CreateCategoryRequest(
         @NotBlank(message = "카테고리 이름은 필수입니다.")
         String name,
@@ -26,7 +24,7 @@ public record CreateCategoryRequest(
         @NotNull(message = "표시 여부는 필수입니다.")
         Boolean isVisible,
 
-        List<ImageRequest> imageList,
+        ImageRequest image,
 
         @NullablePositive(message = "상위 카테고리 ID는 음수가 될 수 없습니다.")
         Long parentId

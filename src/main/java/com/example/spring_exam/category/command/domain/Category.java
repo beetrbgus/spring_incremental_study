@@ -1,5 +1,6 @@
 package com.example.spring_exam.category.command.domain;
 
+import com.example.spring_exam.common.domain.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +31,7 @@ import java.util.List;
 @Table(name = "category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,7 +51,7 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
-    @OneToMany(mappedBy = "banner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banner> banners = new ArrayList<>();
 
     @CreatedDate
@@ -72,5 +73,4 @@ public class Category {
     public void setChildren(List<Category> children) {
         this.children = children;
     }
-
 }
