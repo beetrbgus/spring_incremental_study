@@ -19,6 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
+                .filter(findUser -> findUser.isAccountNonLocked() & findUser.isAccountNonExpired() & findUser.isCredentialsNonExpired())
                 .orElseThrow(() -> new CustomAuthException(ErrorCode.USER_NOT_FOUND));
         return new UserDetailsImpl(user);
     }
