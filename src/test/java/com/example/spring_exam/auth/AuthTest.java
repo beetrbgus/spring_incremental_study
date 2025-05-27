@@ -122,4 +122,77 @@ public class AuthTest {
         .andExpect(status().isUnauthorized())
         ;
     }
+
+    @Test
+    @DisplayName("로그아웃 - 성공")
+    void 로그아웃_성공() throws Exception {
+        LoginReq testuser2 = new LoginReq("testuser2", "Test1234!2");
+
+        // 로그인 요청 수행 후 응답에서 추출
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testuser2)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = loginResult.getResponse().getContentAsString();
+
+        JavaType type = objectMapper.getTypeFactory()
+                .constructParametricType(CommonResponse.class, UserTokenResponse.class);
+
+        CommonResponse<UserTokenResponse> result = objectMapper.readValue(responseBody, type);
+
+        UserTokenResponse userTokenResponse = result.data();
+
+        assertNotNull(userTokenResponse, "로그인 한 뒤의 토큰 값은 Null이면 안 됨");
+        assertNotNull(userTokenResponse.getAccessToken(), "로그인 한 뒤의 Access 토큰 값은 Null 이면 안 됨");
+        assertNotNull(userTokenResponse.getRefreshToken(), "로그인 한 뒤의 Refresh 토큰 값은 Null 이면 안 됨");
+
+        // 로그아웃 테스트
+        mockMvc.perform(
+            post("/api/auth/logout")
+                .header("Authorization", "Bearer " + userTokenResponse.getAccessToken())
+        )
+        .andDo(logoutResult -> {
+            System.out.println("Request Headers: " + logoutResult.getRequest().getHeaderNames());
+        })
+        .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @DisplayName("로그아웃 - 실패 accessToken 만료")
+    void 로그아웃_실패() throws Exception {
+        LoginReq testuser2 = new LoginReq("testuser2", "Test1234!2");
+
+        // 로그인 요청 수행 후 응답에서 추출
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testuser2)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = loginResult.getResponse().getContentAsString();
+
+        JavaType type = objectMapper.getTypeFactory()
+                .constructParametricType(CommonResponse.class, UserTokenResponse.class);
+
+        CommonResponse<UserTokenResponse> result = objectMapper.readValue(responseBody, type);
+
+        UserTokenResponse userTokenResponse = result.data();
+        // 만료 시키기
+        Thread.sleep(5000);
+        
+        assertNotNull(userTokenResponse, "로그인 한 뒤의 토큰 값은 Null이면 안 됨");
+        assertNotNull(userTokenResponse.getAccessToken(), "로그인 한 뒤의 Access 토큰 값은 Null 이면 안 됨");
+        assertNotNull(userTokenResponse.getRefreshToken(), "로그인 한 뒤의 Refresh 토큰 값은 Null 이면 안 됨");
+
+        // 로그아웃 테스트
+        mockMvc.perform(
+                post("/api/auth/logout")
+                .header("Authorization", "Bearer " + userTokenResponse.getAccessToken())
+        )
+        .andExpect(status().is4xxClientError())
+        ;
+    }
 }
