@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.spring_exam.common.exception.AppException;
+import com.example.spring_exam.common.exception.global.BadRequestException;
+import com.example.spring_exam.common.exception.global.ExternalApiException;
 import com.example.spring_exam.common.response.ErrorCode;
 import com.example.spring_exam.image.command.domain.ImageType;
 import com.example.spring_exam.image.command.infrastucture.config.R2StorageProperties;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -67,34 +70,58 @@ public class CloudflareCloudStorageService implements ImageCloudStorageService {
     }
 
     @Override
-    public void deleteImage(List<String> imageUrlList) {
+    public void deleteImage(String imageUrl) {
+        if (!StringUtils.hasText(imageUrl)) {
+            log.warn("삭제할 이미지 URL이 없습니다.");
+        }
+        log.info("Cloudflare 파일 삭제 진입");
+
+        String objectKey = extractObjectKeyFromUrl(imageUrl);
+        deleteRemoteImage(objectKey);
+    }
+
+    /**
+     * 삭제 실패시 실패된 이미지 URL 반환
+     * @param imageUrlList
+     * @return 삭제 성공한 이미지 URL 반환
+     */
+    @Override
+    public List<String> deleteImages(List<String> imageUrlList) {
+        List<String> deleteSuccessImgUrls = new ArrayList<>();
+
         if (imageUrlList == null || imageUrlList.isEmpty()) {
             log.warn("삭제할 이미지 URL이 없습니다.");
-            return;
+            return deleteSuccessImgUrls;
         }
 
         log.info("Cloudflare 파일 삭제 진입: {} 개의 이미지", imageUrlList.size());
 
-        try {
-            for (String imageUrl : imageUrlList) {
-                // URL에서 객체 키(path) 추출
+        for (String imageUrl : imageUrlList) {
+            try {
                 String objectKey = extractObjectKeyFromUrl(imageUrl);
-
-                if (!StringUtils.hasText(objectKey)) {
-                    log.warn("유효하지 않은 이미지 URL 형식: {}", imageUrl);
-                    continue;
-                }
-
-                log.debug("삭제할 객체 키: {}", objectKey);
-
-                // R2에서 객체 삭제
-                client.deleteObject(properties.getImageBucket(), objectKey);
-
-                log.info("파일 삭제 성공 ✅ : {}", objectKey);
+                deleteRemoteImage(objectKey);
+                deleteSuccessImgUrls.add(imageUrl);
+            } catch (ExternalApiException e) {
+                log.warn("이미지 삭제 실패 - URL: {}", imageUrl, e);
             }
+        }
+
+        return deleteSuccessImgUrls;
+    }
+
+    /**
+     * 객체 키로 파일 삭제
+     */
+    private void deleteRemoteImage(String objectKey) {
+        try {
+            log.debug("삭제할 객체 키: {}", objectKey);
+
+            client.deleteObject(properties.getImageBucket(), objectKey);
+
+            log.info("파일 삭제 성공 ✅ : {}", objectKey);
         } catch (Exception e) {
             log.error("Cloudflare 파일 삭제 실패: {}", e.getMessage(), e);
-            throw new AppException(ErrorCode.FILE_DELETE_ERROR);
+            throw new ExternalApiException();
         }
     }
 
@@ -109,17 +136,16 @@ public class CloudflareCloudStorageService implements ImageCloudStorageService {
         // 공개 URL에서 객체 키 추출
         String publicUrl = properties.getImagePublic();
         if (imageUrl.startsWith(publicUrl)) {
-            // URL에서 publicUrl 부분을 제거하고 앞에 있는 슬래시도 제거
             String objectKey = imageUrl.substring(publicUrl.length());
-            // 앞에 슬래시가 있다면 제거
+
             if (objectKey.startsWith("/")) {
                 objectKey = objectKey.substring(1);
             }
             return objectKey;
         }
 
-        // URL 형식이 다른 경우 전체 경로를 반환
+        // URL 형식이 다른 경우 예외 발생
         log.warn("예상치 못한 URL 형식: {}", imageUrl);
-        return null;
+        throw new BadRequestException();
     }
 }

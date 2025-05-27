@@ -3,7 +3,7 @@ package com.example.spring_exam.category.command.application;
 import com.example.spring_exam.category.command.domain.Category;
 import com.example.spring_exam.category.command.dto.CreateCategoryRequest;
 import com.example.spring_exam.category.command.dto.ImageRequest;
-import com.example.spring_exam.category.command.infrastucture.persistence.CategoryRepository;
+import com.example.spring_exam.category.command.infrastucture.persistence.CategoryCommandRepository;
 import com.example.spring_exam.category.command.mapper.CategoryMapper;
 import com.example.spring_exam.common.exception.AppException;
 import com.example.spring_exam.common.exception.global.BadRequestException;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CategoryCommandServiceImpl implements CategoryCommandService {
-    private final CategoryRepository categoryRepository;
+    private final CategoryCommandRepository categoryCommandRepository;
     private final ImageCommandService imageCommandService;
 
     @Override
@@ -29,17 +29,17 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
 
             if(createCategoryRequest.parentId() != null) {
                 category.setParent(
-                    categoryRepository
+                    categoryCommandRepository
                         .findById(createCategoryRequest.parentId())
                         .orElseThrow(BadRequestException::new)
                 );
             }
 
-            if (categoryRepository.existsByName(createCategoryRequest.name())) {
+            if (categoryCommandRepository.existsByName(createCategoryRequest.name())) {
                 throw new BadRequestException(ErrorCode.ALREADY_EXISTS_NAME);
             }
 
-            categoryRepository.save(category);
+            categoryCommandRepository.save(category);
 
             return category.getId();
         } catch (Exception e) {
