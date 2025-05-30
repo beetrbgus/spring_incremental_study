@@ -51,6 +51,7 @@ public class Category extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Banner> banners = new ArrayList<>();
 
@@ -68,9 +69,5 @@ public class Category extends BaseTimeEntity {
     public void setParent(Category parent) {
         this.parent = parent;
         this.depth = parent.depth++;
-    }
-
-    public void setChildren(List<Category> children) {
-        this.children = children;
     }
 }
