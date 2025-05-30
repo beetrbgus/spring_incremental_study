@@ -4,7 +4,7 @@ import com.example.spring_exam.category.command.domain.Category;
 import com.example.spring_exam.category.command.dto.CreateCategoryRequest;
 import com.example.spring_exam.category.command.dto.ImageRequest;
 import com.example.spring_exam.category.command.infrastucture.persistence.CategoryCommandRepository;
-import com.example.spring_exam.category.command.mapper.CategoryMapper;
+import com.example.spring_exam.category.command.mapper.CategoryCommandMapper;
 import com.example.spring_exam.common.exception.AppException;
 import com.example.spring_exam.common.exception.global.BadRequestException;
 import com.example.spring_exam.common.response.ErrorCode;
@@ -25,7 +25,7 @@ public class CategoryCommandServiceImpl implements CategoryCommandService {
     @Override
     public Long createCategory(CreateCategoryRequest createCategoryRequest) {
         try {
-            Category category = CategoryMapper.INSTANCE.entityToReqDTO(createCategoryRequest);
+            Category category = CategoryCommandMapper.INSTANCE.entityToReqDTO(createCategoryRequest);
 
             if(createCategoryRequest.parentId() != null) {
                 category.setParent(
