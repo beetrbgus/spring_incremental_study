@@ -21,7 +21,8 @@ public class QueryDslCategoryQueryRepositoryImpl implements QueryDslCategoryQuer
     @Override
     public List<CategoryReadModel> getCategoryList() {
         List<CategoryReadModel> flatList = jpaQueryFactory
-                .select(new QCategoryReadModel(
+                .select(
+                    new QCategoryReadModel(
                         category.id,
                         category.name,
                         category.depth,
@@ -31,10 +32,10 @@ public class QueryDslCategoryQueryRepositoryImpl implements QueryDslCategoryQuer
                         category.slug,
                         category.description,
                         category.parent.id,
-                        null,
                         category.createdAt,
                         category.updatedAt
-                ))
+                    )
+                )
                 .from(category)
                 .fetch();
 

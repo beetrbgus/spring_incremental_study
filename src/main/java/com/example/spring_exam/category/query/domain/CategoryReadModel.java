@@ -29,7 +29,7 @@ public class CategoryReadModel {
     private LocalDateTime updatedAt;
 
     @QueryProjection
-    public CategoryReadModel(Long id, String name, Integer depth, Integer sortOrder, Boolean isVisible, Boolean isLeaf, String slug, String description, Long parentId, List<CategoryReadModel> children, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public CategoryReadModel(Long id, String name, Integer depth, Integer sortOrder, Boolean isVisible, Boolean isLeaf, String slug, String description, Long parentId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.depth = depth;
@@ -39,7 +39,6 @@ public class CategoryReadModel {
         this.slug = slug;
         this.description = description;
         this.parentId = parentId;
-        this.children = children;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
