@@ -27,6 +27,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
+    private String path;
 
     @Enumerated(EnumType.STRING)
     private ImageType type;

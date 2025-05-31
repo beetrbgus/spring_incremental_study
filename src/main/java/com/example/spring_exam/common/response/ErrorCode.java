@@ -12,6 +12,7 @@ import java.util.Arrays;
 public enum ErrorCode implements EnumCode {
     // Common Error
     INVALID_INPUT_VALUE(40001, HttpStatus.BAD_REQUEST, "잘못된 입력값입니다."),
+    EXTERNAL_REMOTE_COMMUNICATION(40001, HttpStatus.BAD_REQUEST, "외부 API 호출 중 문제가 발생했습니다."),
     METHOD_ARGUMENT_TYPE_MISMATCH(40002, HttpStatus.BAD_REQUEST, "잘못된 파라미터 타입입니다."),
     NOT_FOUND_END_POINT(40400, HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),
 
@@ -40,7 +41,8 @@ public enum ErrorCode implements EnumCode {
     UNSUPPORTED_FILE_TYPE(50701, HttpStatus.BAD_REQUEST, "지원하지 않는 파일 타입입니다."),
     UPLOAD_FILE_NOT_FOUND(50702, HttpStatus.BAD_REQUEST, "파일이 없습니다"),
     INVALID_FILE_NAME(50703, HttpStatus.BAD_REQUEST, "파일 이름이 유효하지 않습니다."),
-
+    ALREADY_EXISTS_NAME(50704, HttpStatus.BAD_REQUEST, "이미 존재하는 이름입니다."),
+    FILE_DELETE_ERROR(50705, HttpStatus.INTERNAL_SERVER_ERROR, "파일을 삭제하는 도중 오류가 발생했습니다."),
 
     ;
     private final Integer code;

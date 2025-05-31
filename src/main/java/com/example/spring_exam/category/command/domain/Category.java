@@ -1,9 +1,11 @@
 package com.example.spring_exam.category.command.domain;
 
+import com.example.spring_exam.common.domain.BaseTimeEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -29,18 +31,17 @@ import java.util.List;
 @Table(name = "category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class Category extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Integer depth;
     private Integer sortOrder;
     private Boolean isVisible;
     private Boolean isLeaf;
-    private String slug; // web에서 나타내기 좋은 공백없는 URL 친화적 이름 (예: pasta-sauce)
+    private String slug; //web에서 나타내기 좋은 공백없는 URL 친화적 이름 (예: pasta-sauce)
     private String description;
-    private String thumbnailUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -49,6 +50,10 @@ public class Category {
     @Builder.Default
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Banner> banners = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -59,5 +64,10 @@ public class Category {
     @PreRemove
     public void updateLeafStatus() {
         this.isLeaf = children.isEmpty();
+    }
+
+    public void setParent(Category parent) {
+        this.parent = parent;
+        this.depth = parent.depth++;
     }
 }

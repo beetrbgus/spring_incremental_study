@@ -85,7 +85,7 @@ tasks.named('test') {
 }
 
 // Querydsl 설정
-def querydslSrcDir = 'src/main/generated'
+def querydslSrcDir = 'build/generated'
 
 clean {
     delete file(querydslSrcDir)
@@ -108,4 +108,8 @@ compileTestJava {
 
 tasks.withType(Test).configureEach {
     enabled = false
+}
+
+clean {
+    delete file(querydslSrcDir)
 }
