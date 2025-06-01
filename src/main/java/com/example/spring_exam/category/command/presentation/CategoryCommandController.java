@@ -1,4 +1,4 @@
-package com.example.spring_exam.category.presentation;
+package com.example.spring_exam.category.command.presentation;
 
 import com.example.spring_exam.category.command.application.CategoryCommandService;
 import com.example.spring_exam.category.command.dto.CreateCategoryRequest;
