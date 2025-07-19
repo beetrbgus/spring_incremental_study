@@ -1,7 +1,7 @@
 package com.example.spring_exam.category.query.infrastructure.persistence;
 
 import com.example.spring_exam.category.query.domain.CategoryReadModel;
-import com.example.spring_exam.category.query.domain.QCategoryReadModel;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,7 +22,8 @@ public class QueryDslCategoryQueryRepositoryImpl implements QueryDslCategoryQuer
     public List<CategoryReadModel> getCategoryList() {
         List<CategoryReadModel> flatList = jpaQueryFactory
                 .select(
-                    new QCategoryReadModel(
+                    Projections.constructor(
+                        CategoryReadModel.class,
                         category.id,
                         category.name,
                         category.depth,
