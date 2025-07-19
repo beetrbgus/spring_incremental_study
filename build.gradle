@@ -56,15 +56,12 @@ dependencies {
     // https://github.com/f4b6a3/uuid-creator
 //    implementation 'com.github.rholder.snowflake:1.0.2'
 
-    // QueryDsl
-    implementation "com.querydsl:querydsl-apt:$queryDslVersion"
-    implementation "com.querydsl:querydsl-core:$queryDslVersion"
-    implementation "com.querydsl:querydsl-jpa:$queryDslVersion:jakarta"
-
-    annotationProcessor "com.querydsl:querydsl-apt:$queryDslVersion:jakarta"
-
-
+/* querydsl*/
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa:6.10.1'
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:6.10.1:jpa'
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 
     // mapstruct
